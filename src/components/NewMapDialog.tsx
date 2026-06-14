@@ -5,11 +5,13 @@ interface NewMapDialogProps {
   onClose: () => void;
 }
 
-const PRESETS = [
-  { label: '15 × 15', width: 15, height: 15 },
-  { label: '20 × 20', width: 20, height: 20 },
-  { label: '30 × 30', width: 30, height: 30 },
-];
+const PRESET_SIZES = [15, 18, 21, 24, 27, 30] as const;
+
+const PRESETS = PRESET_SIZES.map((size) => ({
+  label: `${size} × ${size}`,
+  width: size,
+  height: size,
+}));
 
 export function NewMapDialog({ onCreate, onClose }: NewMapDialogProps) {
   const [width, setWidth] = useState(15);
