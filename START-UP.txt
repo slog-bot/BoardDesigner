@@ -1,0 +1,54 @@
+TILE MAP EDITOR - START UP GUIDE
+================================
+
+WHAT YOU NEED
+-------------
+Install Node.js first (version 18 or newer):
+https://nodejs.org/
+
+
+FIRST TIME SETUP
+----------------
+1. Open a terminal in this project folder.
+
+2. Install dependencies:
+
+   npm install
+
+   If you are on Windows PowerShell and get a "scripts disabled" error, use:
+
+   npm.cmd install
+
+
+START THE APP
+-------------
+Run:
+
+npm run dev
+
+On Windows PowerShell, if needed:
+
+npm.cmd run dev
+
+Then open the link shown in the terminal (usually http://localhost:5173).
+
+
+ADD YOUR OWN TILES
+------------------
+Put PNG files in:
+
+public/tiles
+
+Refresh the browser if new tiles do not appear right away.
+
+
+SAVE A MAP
+----------
+Click Save in the app. Your map is saved to:
+
+maps
+
+
+STOP THE APP
+------------
+In the terminal, press Ctrl + C.

@@ -5,4 +5,4 @@ export interface TileData {
   url: string;
 }
 
-export type EditorTool = 'paint' | 'erase';
+export type EditorTool = 'paint' | 'erase' | 'fill';

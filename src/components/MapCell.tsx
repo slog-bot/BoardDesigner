@@ -4,10 +4,11 @@ import type { CellTile } from '../types';
 interface MapCellProps {
   tile: CellTile;
   cellSize: number;
-  onPaint: () => void;
+  enableDragPaint: boolean;
+  onInteract: () => void;
 }
 
-export function MapCell({ tile, cellSize, onPaint }: MapCellProps) {
+export function MapCell({ tile, cellSize, enableDragPaint, onInteract }: MapCellProps) {
   const tileUrl = tile ? TileService.getTileUrl(tile) : null;
 
   return (
@@ -20,13 +21,13 @@ export function MapCell({ tile, cellSize, onPaint }: MapCellProps) {
           return;
         }
         event.preventDefault();
-        onPaint();
+        onInteract();
       }}
       onPointerEnter={(event) => {
-        if (event.buttons !== 1) {
+        if (!enableDragPaint || event.buttons !== 1) {
           return;
         }
-        onPaint();
+        onInteract();
       }}
       aria-label={tile ? `Cell with ${tile}` : 'Empty cell'}
     >

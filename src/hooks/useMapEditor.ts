@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { CellTile, EditorTool, MapState } from '../types';
 import { createEmptyMap } from '../types';
+import { floodFillRegion } from '../services/FloodFillService';
+import type { CellChange } from '../services/FloodFillService';
 
 export const MAX_HISTORY = 50;
 export const MIN_ZOOM = 0.25;
@@ -8,17 +10,9 @@ export const MAX_ZOOM = 3;
 export const ZOOM_STEP = 0.25;
 export const BASE_CELL_SIZE = 48;
 
-interface CellChange {
-  row: number;
-  col: number;
-  previous: CellTile;
-  next: CellTile;
-}
-
 interface HistoryEntry {
   changes: CellChange[];
 }
-
 function cloneMap(map: MapState): MapState {
   return {
     width: map.width,
@@ -57,6 +51,7 @@ export interface MapEditorActions {
   loadMap: (map: MapState) => void;
   selectTile: (filename: string) => void;
   selectEraser: () => void;
+  selectFill: () => void;
   clearMap: () => void;
   setZoom: (zoom: number) => void;
   zoomIn: () => void;
@@ -65,7 +60,7 @@ export interface MapEditorActions {
   redo: () => void;
   beginStroke: () => void;
   endStroke: () => void;
-  paintCell: (row: number, col: number) => void;
+  interactCell: (row: number, col: number) => void;
 }
 
 export function useMapEditor(initialWidth = 15, initialHeight = 15) {
@@ -130,6 +125,10 @@ export function useMapEditor(initialWidth = 15, initialHeight = 15) {
 
   const selectEraser = useCallback(() => {
     setTool('erase');
+  }, []);
+
+  const selectFill = useCallback(() => {
+    setTool('fill');
   }, []);
 
   const clearMap = useCallback(() => {
@@ -256,6 +255,37 @@ export function useMapEditor(initialWidth = 15, initialHeight = 15) {
     [tool, selectedTile, commitEntry],
   );
 
+  const fillCell = useCallback(
+    (row: number, col: number) => {
+      if (!selectedTile) {
+        return;
+      }
+
+      setMap((current) => {
+        const changes = floodFillRegion(current, row, col, selectedTile);
+        if (changes.length === 0) {
+          return current;
+        }
+
+        commitEntry({ changes });
+        return applyChanges(current, changes);
+      });
+    },
+    [selectedTile, commitEntry],
+  );
+
+  const interactCell = useCallback(
+    (row: number, col: number) => {
+      if (tool === 'fill') {
+        fillCell(row, col);
+        return;
+      }
+
+      paintCell(row, col);
+    },
+    [tool, fillCell, paintCell],
+  );
+
   const state: MapEditorState = useMemo(
     () => ({
       map,
@@ -273,6 +303,7 @@ export function useMapEditor(initialWidth = 15, initialHeight = 15) {
     loadMap,
     selectTile,
     selectEraser,
+    selectFill,
     clearMap,
     setZoom,
     zoomIn,
@@ -281,7 +312,7 @@ export function useMapEditor(initialWidth = 15, initialHeight = 15) {
     redo,
     beginStroke,
     endStroke,
-    paintCell,
+    interactCell,
   };
 
   return { state, actions };

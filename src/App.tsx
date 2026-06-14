@@ -10,6 +10,7 @@ import './App.css';
 function App() {
   const { state, actions } = useMapEditor(15, 15);
   const [showNewMapDialog, setShowNewMapDialog] = useState(false);
+  const [showGridLines, setShowGridLines] = useState(true);
 
   const tiles = useMemo(() => TileService.getAllTiles(), []);
 
@@ -19,6 +20,8 @@ function App() {
         state={state}
         actions={actions}
         onNewMap={() => setShowNewMapDialog(true)}
+        showGridLines={showGridLines}
+        onToggleGridLines={() => setShowGridLines((current) => !current)}
       />
 
       <div className="app__body">
@@ -27,6 +30,7 @@ function App() {
           selectedTile={state.selectedTile}
           tool={state.tool}
           onSelectTile={actions.selectTile}
+          onSelectFill={actions.selectFill}
           onSelectEraser={actions.selectEraser}
           onClearMap={actions.clearMap}
           mapWidth={state.map.width}
@@ -34,7 +38,7 @@ function App() {
         />
 
         <main className="app__main">
-          <MapGrid state={state} actions={actions} />
+          <MapGrid state={state} actions={actions} showGridLines={showGridLines} />
         </main>
       </div>
 

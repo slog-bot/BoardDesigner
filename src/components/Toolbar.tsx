@@ -7,9 +7,17 @@ interface ToolbarProps {
   state: MapEditorState;
   actions: MapEditorActions;
   onNewMap: () => void;
+  showGridLines: boolean;
+  onToggleGridLines: () => void;
 }
 
-export function Toolbar({ state, actions, onNewMap }: ToolbarProps) {
+export function Toolbar({
+  state,
+  actions,
+  onNewMap,
+  showGridLines,
+  onToggleGridLines,
+}: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -93,6 +101,16 @@ export function Toolbar({ state, actions, onNewMap }: ToolbarProps) {
           title="Redo"
         >
           Redo
+        </button>
+      </div>
+
+      <div className="toolbar__group">
+        <button
+          type="button"
+          className={`btn${showGridLines ? ' btn--active' : ''}`}
+          onClick={onToggleGridLines}
+        >
+          Grid Lines {showGridLines ? 'On' : 'Off'}
         </button>
       </div>
 
